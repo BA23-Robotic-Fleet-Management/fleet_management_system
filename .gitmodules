@@ -1,0 +1,6 @@
+[submodule "src/free_fleet"]
+	path = src/free_fleet
+	url = https://github.com/open-rmf/free_fleet.git
+[submodule "src/rmf_internal_msgs"]
+	path = src/rmf_internal_msgs
+	url = https://github.com/open-rmf/rmf_internal_msgs
