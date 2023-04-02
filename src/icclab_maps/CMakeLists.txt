@@ -60,6 +60,10 @@ foreach(path ${traffic_editor_paths})
     endif()
   endif()
 
+  add_custom_target(generate_${world_name} ALL
+    DEPENDS ${output_world_path}
+  )
+
   ##############################################################################
   # generate the navmesh and required files for crowd simulation for gz
   # set(crowd_sim_config_resource ${output_dir}/config_resource/)
@@ -73,7 +77,7 @@ foreach(path ${traffic_editor_paths})
   # # This will initiate both custom commands: ${output_world_path} and ${world_name}_crowdsim
   # add_custom_target(generate_${world_name}_crowdsim ALL
   #   DEPENDS ${world_name}_crowdsim
-  # )  
+  # )
 
   ##############################################################################
   ## Ign worlds
