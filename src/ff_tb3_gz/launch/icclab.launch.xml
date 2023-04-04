@@ -21,7 +21,7 @@
     <!-- launch the free fleet client first -->
     <node name="turtlebot3_free_fleet_client_node" pkg="free_fleet_client_ros2"
         exec="free_fleet_client_ros2" output="both">
-    <param name="fleet_name" value="turtlebot3"/>
+    <param name="fleet_name" value="ff_tb3_gz"/>
     <param name="robot_name" value="ros2_tb3_0"/>
     <param name="robot_model" value="turtlebot3"/>
     <param name="level_name" value="turtlebot_world"/>
