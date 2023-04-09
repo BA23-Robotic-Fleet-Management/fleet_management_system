@@ -101,7 +101,7 @@ class RMFAdapter(rclpy.node.Node):
             return self.get_robot_state(robot_name).last_request_completed()
 
         def __get_robot_state(robot_name: str) -> RobotState:
-            robot = self.self.robots.get(robot_name)
+            robot = self.robots.get(robot_name)
             if robot is None:
                 return None
 
