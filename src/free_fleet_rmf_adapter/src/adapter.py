@@ -51,9 +51,9 @@ class Robot:
             self.state.name,
             # FIXME: From where can we get this information
             # it is not published in the fleet_state / free_fleet_states
-            "self.state.charger_name",
+            "test_node",
             # FIXME: This is probably wrong
-            self.state.location.level_name,
+            'L1',
             [self.state.location.x, self.state.location.y, self.state.location.yaw],
             self.state.battery_percent,
         )
