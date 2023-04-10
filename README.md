@@ -35,3 +35,11 @@ source install/setup.bash
 
 ros2 launch free_fleet_rmf_adapter adapter.launch.xml
 ```
+
+Dispatch via RMF:
+```bash
+cd fleet_manager
+source install/setup.bash
+
+ros2 run rmf_demos_tasks dispatch_patrol --places middle_top2 --use_sim_time
+```
