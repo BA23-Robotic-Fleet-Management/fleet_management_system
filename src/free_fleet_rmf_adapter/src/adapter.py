@@ -12,23 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import argparse
-import yaml
-import time
-import rclpy
+import math
+import sys
+from functools import partial
+
 import rclpy.node
-from rclpy.parameter import Parameter
-from rmf_fleet_msgs.msg import FleetState, RobotState, Location, PathRequest
 import rmf_adapter as adpt
-from rclpy.qos import qos_profile_system_default
-from rclpy.qos import QoSProfile
-from rclpy.qos import QoSHistoryPolicy as History
-from rclpy.qos import QoSReliabilityPolicy as Reliability
+import rmf_adapter.vehicletraits as traits
+import rmf_adapter.geometry as geometry
+import yaml
+from rclpy.parameter import Parameter
+from rclpy.qos import qos_profile_system_default, QoSProfile, QoSHistoryPolicy as History, QoSReliabilityPolicy as Reliability
+from rmf_fleet_msgs.msg import FleetState, RobotState, Location, PathRequest
 
 from .configuration import get_configuration
 
-from functools import partial
 
 # This should be the fleet manager name
 ADAPTER_NAME = "free_fleet_rmf_adapter"
@@ -55,13 +54,16 @@ class Robot:
             # FIXME: This is probably wrong
             'L1',
             [self.state.location.x, self.state.location.y, self.state.location.yaw],
-            self.state.battery_percent,
+            # not dealing with low battery right now
+            # self.state.battery_percent,
+            100,
         )
 
 
 class RMFAdapter(rclpy.node.Node):
     def __init__(self, config, nav_graph_path, use_sim_time):
         super().__init__(ADAPTER_NAME)
+        self.config = config
         # Task ID counter
         self.next_id = 0
         # Dict that contains the current task ID that is being processed
@@ -90,6 +92,19 @@ class RMFAdapter(rclpy.node.Node):
             qos_profile=qos_profile_system_default
         )
 
+        profile = traits.Profile(geometry.make_final_convex_circle(
+            self.config['rmf_fleet']['profile']['footprint']),
+            geometry.make_final_convex_circle(
+                self.config['rmf_fleet']['profile']['vicinity']))
+        self.vehicle_traits = traits.VehicleTraits(
+            linear=traits.Limits(
+                *self.config['rmf_fleet']['limits']['linear']),
+            angular=traits.Limits(
+                *self.config['rmf_fleet']['limits']['angular']),
+            profile=profile)
+        self.vehicle_traits.differential.reversible =\
+            self.config['rmf_fleet']['reversible']
+
     def update_robot_state(self, rmf_message: FleetState):
         """Add or update a robot state
 
@@ -107,18 +122,20 @@ class RMFAdapter(rclpy.node.Node):
 
             return robot.to_easy_control_robot_state()
 
-        def __navigate(robot_name: str, map_name: str, goal: Location, update_handle) -> partial:
+        def __navigate(robot_name: str, map_name: str, goal: [], update_handle) -> partial:
             cmd_id = self.next_id
             self.next_id += 1
             self.cmd_ids[robot_name] = cmd_id
 
-            robot = self.self.robots.get(robot_name)
+            robot = self.robots.get(robot_name)
             if robot is None:
                 return None
 
-            target_x = goal["x"]
-            target_y = goal["y"]
-            target_yaw = goal["yaw"]
+            self.get_logger().info(f"{goal=}")
+
+            target_x = goal[0]
+            target_y = goal[1]
+            target_yaw = goal[2]
 
             time_ = self.get_clock().now().to_msg()
 
@@ -157,7 +174,7 @@ class RMFAdapter(rclpy.node.Node):
             self.next_id += 1
             self.cmd_ids[robot_name] = cmd_id
 
-            robot = self.self.robots.get(robot_name)
+            robot = self.robots.get(robot_name)
             if robot is None:
                 return None
 
@@ -227,6 +244,9 @@ class RMFAdapter(rclpy.node.Node):
 
         if use_sim_time:
             self.easy_full_control.node.use_sim_time()
+
+    def disp(self, A, B):
+        return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
 
 
 # ------------------------------------------------------------------------------
