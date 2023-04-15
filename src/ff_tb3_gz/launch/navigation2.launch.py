@@ -18,61 +18,104 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    GroupAction,
+    IncludeLaunchDescription,
+)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
+from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time", default="False")
-    map_dir = LaunchConfiguration("map", default="default_ns")
+    map_file = LaunchConfiguration("map", default="default_ns")
     namespace = LaunchConfiguration("namespace", default="default_ns")
+    params_file = LaunchConfiguration("params_file", default="default_ns")
 
-    param_dir = LaunchConfiguration("params_file", default="default_ns")
+    configured_params = RewrittenYaml(
+        source_file=params_file,
+        root_key=namespace,
+        param_rewrites={},
+        convert_types=True,
+    )
+    remappings = [("/tf", "tf"), ("/tf_static", "tf_static")]
 
-    nav2_launch_file_dir = os.path.join(
-        get_package_share_directory("nav2_bringup"), "launch"
+    declare_map_arg = DeclareLaunchArgument(
+        "map",
+        default_value=map_file,
+        description="Full path to map file to load",
     )
 
-    return LaunchDescription(
+    declare_namespace_arg = DeclareLaunchArgument(
+        "namespace",
+        default_value=namespace,
+        description="Full path to map file to load",
+    )
+
+    declare_params_file_arg = DeclareLaunchArgument(
+        "params_file",
+        default_value=params_file,
+        description="Full path to param file to load",
+    )
+
+    declare_sim_time_arg = DeclareLaunchArgument(
+        "use_sim_time",
+        default_value="False",
+        description="Use simulation (Gazebo) clock if true",
+    )
+
+    ld = LaunchDescription()
+
+    # Specify the actions
+    bringup_cmd_group = GroupAction(
         [
-            DeclareLaunchArgument(
-                "map",
-                default_value=map_dir,
-                description="Full path to map file to load",
-            ),
-            DeclareLaunchArgument(
-                "namespace",
-                default_value=namespace,
-                description="Full path to map file to load",
-            ),
-            DeclareLaunchArgument(
-                "params_file",
-                default_value=param_dir,
-                description="Full path to param file to load",
-            ),
-            DeclareLaunchArgument(
-                "use_sim_time",
-                default_value="False",
-                description="Use simulation (Gazebo) clock if true",
+            PushRosNamespace(namespace=namespace),
+            Node(
+                name="nav2_container",
+                package="rclcpp_components",
+                executable="component_container_isolated",
+                parameters=[configured_params, {"autostart": "True"}],
+                arguments=["--ros-args", "--log-level", "info"],
+                remappings=remappings,
+                output="screen",
             ),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    [nav2_launch_file_dir, "/bringup_launch.py"]
+                    os.path.join(get_package_share_directory("ff_tb3_gz"), "launch", "localization_launch.py")
                 ),
                 launch_arguments={
                     "namespace": namespace,
-                    "use_namespace": "True",
-                    "slam": "False",
-                    "map": map_dir,
+                    "map": map_file,
                     "use_sim_time": use_sim_time,
-                    "params_file": param_dir,
                     "autostart": "True",
-                    "use_composition": "False",
+                    "params_file": params_file,
                     "use_respawn": "False",
+                    "container_name": "nav2_container",
+                }.items(),
+            ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(get_package_share_directory("nav2_bringup"), "launch", "navigation_launch.py")
+                ),
+                launch_arguments={
+                    "namespace": namespace,
+                    "use_sim_time": use_sim_time,
+                    "autostart": "True",
+                    "params_file": params_file,
+                    "use_respawn": "False",
+                    "container_name": "nav2_container",
                 }.items(),
             ),
         ]
     )
+
+    ld.add_action(declare_map_arg)
+    ld.add_action(declare_namespace_arg)
+    ld.add_action(declare_params_file_arg)
+    ld.add_action(declare_sim_time_arg)
+    ld.add_action(bringup_cmd_group)
+
+    return ld

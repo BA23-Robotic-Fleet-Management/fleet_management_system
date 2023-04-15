@@ -23,10 +23,9 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     sdf_path = os.path.join(
-        get_package_share_directory("turtlebot3_gazebo"),
-        "models",
-        "turtlebot3_burger",
-        "model.sdf",
+        get_package_share_directory("ff_tb3_gz"),
+        "model",
+        "burger.sdf",
     )
 
     urdf_path = os.path.join(
@@ -92,7 +91,6 @@ def generate_launch_description():
             {
                 "use_sim_time": use_sim_time,
                 "robot_description": robot_desc,
-                # "frame_prefix": robot_name,
             }
         ],
         remappings=remappings

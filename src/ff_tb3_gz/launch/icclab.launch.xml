@@ -1,12 +1,12 @@
 <?xml version='1.0' ?>
 <launch>
     <arg name="map_file" default="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based.yaml"/>
-    <arg name="param_dir" default="$(find-pkg-share ff_examples_ros2)/params"/>
+    <arg name="param_dir" default="$(find-pkg-share ff_tb3_gz)/params"/>
     <arg name="slam" default="False"/>
 
     <include file="$(find-pkg-share icclab_maps)/icclab_world.launch.xml"/>
     <!-- Spawn first reboter -->
-    <include file="$(find-pkg-share ff_tb3_gz)/spawn_turtlebot3.launch.py">
+    <include file="$(find-pkg-share ff_tb3_gz)/launch/spawn_turtlebot3.launch.py">
         <arg name="name" value="robot1"/>
         <arg name="use_sim_time" value="True"/>
         <arg name="x_pos" value="20.0"/>
@@ -14,7 +14,7 @@
     </include>
 
     <!-- launch the navigation (nav2) stack with test maps -->
-    <include file="$(find-pkg-share ff_tb3_gz)/navigation2.launch.py">
+    <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
         <arg name="namespace" value="robot1"/>
         <arg name="use_sim_time" value="True"/>
         <arg name="map" value="$(var map_file)"/>
@@ -24,7 +24,7 @@
     <include file="$(find-pkg-share nav2_bringup)/launch/rviz_launch.py">
         <arg name="namespace" value="robot1"/>
         <arg name="use_namespace" value="True"/>
-        <arg name="rviz_config" value="/opt/ros/humble/share/nav2_bringup/rviz/nav2_namespaced_view.rviz"/>
+        <arg name="rviz_config" value="$(find-pkg-share nav2_bringup)/rviz/nav2_namespaced_view.rviz"/>
     </include>
 
     <!-- launch the free fleet client first -->

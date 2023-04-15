@@ -9,7 +9,9 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 install(DIRECTORY
-  launch/
+  launch
+  model
+  params
   DESTINATION share/${PROJECT_NAME}
 )
 
