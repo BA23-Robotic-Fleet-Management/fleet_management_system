@@ -22,12 +22,6 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    sdf_path = os.path.join(
-        get_package_share_directory("ff_tb3_gz"),
-        "model",
-        "burger.sdf",
-    )
-
     urdf_path = os.path.join(
         get_package_share_directory("turtlebot3_gazebo"),
         "urdf",
@@ -42,6 +36,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time", default="False")
     x_pos = LaunchConfiguration("x_pos", default="0.0")
     y_pos = LaunchConfiguration("y_pos", default="0.0")
+    sdf_file = LaunchConfiguration("sdf_file", default="")
 
     # Declare the launch arguments
     declare_robot_name_param = DeclareLaunchArgument(
@@ -54,6 +49,7 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_x_pos_param = DeclareLaunchArgument("x_pos", default_value="0.0")
     declare_y_pos_param = DeclareLaunchArgument("y_pos", default_value="0.0")
+    declare_sdf_file_param = DeclareLaunchArgument("sdf_file", default_value="")
 
     start_gazebo_ros_spawner_cmd = Node(
         package="gazebo_ros",
@@ -64,7 +60,7 @@ def generate_launch_description():
             "-robot_namespace",
             robot_name,
             "-file",
-            sdf_path,
+            sdf_file,
             "-x",
             x_pos,
             "-y",
@@ -102,6 +98,7 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_param)
     ld.add_action(declare_x_pos_param)
     ld.add_action(declare_y_pos_param)
+    ld.add_action(declare_sdf_file_param)
     # Add any conditioned actions
     ld.add_action(start_gazebo_ros_spawner_cmd)
     ld.add_action(start_robot_state_publisher_cmd)
