@@ -1,75 +1,89 @@
 <?xml version='1.0' ?>
 <launch>
     <arg name="map_file" default="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based.yaml"/>
-    <arg name="param_dir" default="$(find-pkg-share ff_examples_ros2)/params"/>
+    <arg name="param_dir" default="$(find-pkg-share ff_tb3_gz)/params"/>
+    <arg name="models_dir" default="$(find-pkg-share ff_tb3_gz)/models"/>
     <arg name="slam" default="False"/>
 
     <include file="$(find-pkg-share icclab_maps)/icclab_world.launch.xml"/>
-    <include file="$(find-pkg-share turtlebot3_gazebo)/launch/robot_state_publisher.launch.py"/>
-    <include file="$(find-pkg-share turtlebot3_gazebo)/launch/spawn_turtlebot3.launch.py">
-        <arg name="x_pose" value="20"/>
-        <arg name="y_pose" value="-14"/>
-    </include>
+    <!-- Spawn first reboter -->
+    <group>
+        <let name="ROBOT_NAME" value="robot1"/>
+        <include file="$(find-pkg-share ff_tb3_gz)/launch/spawn_turtlebot3.launch.py">
+            <arg name="name" value="$(var ROBOT_NAME)"/>
+            <arg name="use_sim_time" value="True"/>
+            <arg name="x_pos" value="15.0"/>
+            <arg name="y_pos" value="-12.0"/>
+            <arg name="sdf_file" value="$(var models_dir)/$(var ROBOT_NAME).sdf"/>
+        </include>
+        <!-- launch the navigation (nav2) stack with test maps -->
+        <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
+            <arg name="use_sim_time" value="True"/>
+            <arg name="map" value="$(var map_file)"/>
+            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger.yaml"/>
+        </include>
+        <!-- launch the rviz -->
+        <include file="$(find-pkg-share nav2_bringup)/launch/rviz_launch.py">
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
+            <arg name="use_namespace" value="True"/>
+            <arg name="rviz_config" value="$(find-pkg-share nav2_bringup)/rviz/nav2_namespaced_view.rviz"/>
+        </include>
+        <!-- launch the free fleet client first -->
+        <node name="turtlebot3_free_fleet_client_node_$(var ROBOT_NAME)" pkg="free_fleet_client_ros2"
+            exec="free_fleet_client_ros2" output="both">
+            <param name="fleet_name" value="ff_tb3_gz"/>
+            <param name="robot_name" value="$(var ROBOT_NAME)"/>
+            <param name="robot_model" value="turtlebot3"/>
+            <param name="level_name" value="L1"/>
+            <param name="dds_domain" value="42"/>
+            <param name="max_dist_to_first_waypoint" value="10.0"/>
+            <param name="map_frame" value="map"/>
+            <param name="robot_frame" value="base_footprint"/>
+            <param name="nav2_server_name" value="/$(var ROBOT_NAME)/navigate_to_pose"/>
+            <param name="use_sim_time" value="True"/>
+            <param name="dds_domain" value="42"/>
+        </node>
+    </group>
 
-    <!-- launch the navigation (nav2) stack with test maps -->
-    <!-- TODO: diff /opt/ros/humble/share/turtlebot3_navigation2/param/burger.yaml /home/roscon/ff_ros2_ws/install/ff_examples_ros2/share/ff_examples_ros2/params/turtlebot3_world_burger.yaml -->
-    <include file="$(find-pkg-share turtlebot3_navigation2)/launch/navigation2.launch.py">
-        <arg name="use_sim_time" value="True"/>
-        <arg name="map" value="$(var map_file)"/>
-        <arg name="slam" value="$(var slam)"/>
-        <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger.yaml"/>
-    </include>
+    <!-- Spawn second reboter -->
+    <group>
+        <let name="ROBOT_NAME" value="robot2"/>
+        <include file="$(find-pkg-share ff_tb3_gz)/launch/spawn_turtlebot3.launch.py">
+            <arg name="name" value="$(var ROBOT_NAME)"/>
+            <arg name="use_sim_time" value="True"/>
+            <arg name="x_pos" value="20.0"/>
+            <arg name="y_pos" value="-14.0"/>
+            <arg name="sdf_file" value="$(var models_dir)/$(var ROBOT_NAME).sdf"/>
+        </include>
+        <!-- launch the navigation (nav2) stack with test maps -->
+        <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
+            <arg name="use_sim_time" value="True"/>
+            <arg name="map" value="$(var map_file)"/>
+            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger.yaml"/>
+        </include>
+        <!-- launch the rviz -->
+        <include file="$(find-pkg-share nav2_bringup)/launch/rviz_launch.py">
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
+            <arg name="use_namespace" value="True"/>
+            <arg name="rviz_config" value="$(find-pkg-share nav2_bringup)/rviz/nav2_namespaced_view.rviz"/>
+        </include>
+        <!-- launch the free fleet client first -->
+        <node name="turtlebot3_free_fleet_client_node_$(var ROBOT_NAME)" pkg="free_fleet_client_ros2"
+            exec="free_fleet_client_ros2" output="both">
+            <param name="fleet_name" value="ff_tb3_gz"/>
+            <param name="robot_name" value="$(var ROBOT_NAME)"/>
+            <param name="robot_model" value="turtlebot3"/>
+            <param name="level_name" value="L1"/>
+            <param name="dds_domain" value="42"/>
+            <param name="max_dist_to_first_waypoint" value="10.0"/>
+            <param name="map_frame" value="map"/>
+            <param name="robot_frame" value="base_footprint"/>
+            <param name="nav2_server_name" value="/$(var ROBOT_NAME)/navigate_to_pose"/>
+            <param name="use_sim_time" value="True"/>
+            <param name="dds_domain" value="42"/>
+        </node>
+    </group>
 
-    <!-- launch the free fleet client first -->
-    <node name="turtlebot3_free_fleet_client_node" pkg="free_fleet_client_ros2"
-        exec="free_fleet_client_ros2" output="both">
-    <param name="fleet_name" value="ff_tb3_gz"/>
-    <param name="robot_name" value="ros2_tb3_0"/>
-    <param name="robot_model" value="turtlebot3"/>
-    <param name="level_name" value="turtlebot_world"/>
-    <param name="dds_domain" value="42"/>
-    <param name="max_dist_to_first_waypoint" value="10.0"/>
-    <param name="map_frame" value="map"/>
-    <param name="robot_frame" value="base_footprint"/>
-    <param name="nav2_server_name" value="/navigate_to_pose"/>
-    <param name="use_sim_time" value="True"/>
-    <param name="dds_domain" value="42"/>
-</node>
 </launch>
-
-<!-- turtlebot3_world.launch.py -->
-<!--     robot_state_publisher_cmd = IncludeLaunchDescription( -->
-<!--         PythonLaunchDescriptionSource( -->
-<!--             os.path.join(launch_file_dir, 'robot_state_publisher.launch.py') -->
-<!--         ), -->
-<!--         launch_arguments={'use_sim_time': use_sim_time}.items() -->
-<!--     ) -->
-    <!---->
-    <!-- spawn_turtlebot_cmd = IncludeLaunchDescription( -->
-    <!--     PythonLaunchDescriptionSource( -->
-    <!--         os.path.join(launch_file_dir, 'spawn_turtlebot3.launch.py') -->
-    <!--     ), -->
-    <!--     launch_arguments={ -->
-    <!--         'x_pose': x_pose, -->
-    <!--         'y_pose': y_pose -->
-    <!--     }.items() -->
-    <!-- ) -->
-
-
-<!---->
-<!-- gz standalone -->
-  <!-- Common launch -->
-<!--   <include file="$(find-pkg-share rmf_demos)/common.launch.xml"> -->
-<!--     <arg name="use_sim_time" value="$(var use_sim_time)"/> -->
-<!--     <arg name="viz_config_file" value ="$(find-pkg-share roscon_demos)/include/workshop.rviz"/> -->
-<!--     <arg name="config_file" value="$(find-pkg-share roscon_maps)/$(var map_name)/$(var map_name).building.yaml"/> -->
-<!--     <arg name="use_rmf_panel" value="false"/> -->
-<!--   </include> -->
-<!---->
-  <!-- Simulation launch -->
-<!--   <include file="$(find-pkg-share rmf_demos_gz_classic)/simulation.launch.xml"> -->
-<!--     <arg name="map_package" value="roscon_maps" /> -->
-<!--     <arg name="map_name" value="$(var map_name)" /> -->
-<!--     <arg name="gazebo_version" value="$(var gazebo_version)" /> -->
-<!--   </include> -->
-<!---->
