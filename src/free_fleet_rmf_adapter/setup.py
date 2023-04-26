@@ -17,7 +17,7 @@ setup(
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="Hussein Kabbout, Navid Sassan",
-    maintainer_email="kabbohus@students.zhaw.ch,sassanav@students.zhaw.ch",
+    maintainer_email="hussein.kabbout@hotmail.com,sassanav@students.zhaw.ch",
     description="TODO_DESCRIPTION",
     # TODO: Is this allowed?
     license="TODO_LICENSE",
