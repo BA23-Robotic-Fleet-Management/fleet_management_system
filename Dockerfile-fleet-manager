@@ -7,5 +7,3 @@ WORKDIR /usr/src/app
 COPY . .
 # Build package
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source /rmf_demos_ws/install/setup.bash && colcon build"
-
-ENTRYPOINT ["bash", "/usr/src/app/docker-entrypoint.sh"]
