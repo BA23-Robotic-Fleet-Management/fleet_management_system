@@ -1,9 +1,0 @@
-FROM ghcr.io/ba23-robotic-fleet-management/fleet-manager-ci-base:main
-
-ENV DEBIAN_FRONTEND=noninteractive
-ENV ROS_DOMAIN_ID=1
-
-WORKDIR /usr/src/app
-COPY . .
-# Build package
-RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source /rmf_demos_ws/install/setup.bash && colcon build"
