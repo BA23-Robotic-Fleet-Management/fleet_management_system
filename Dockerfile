@@ -10,7 +10,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source /rmf_demos_ws/inst
 
 FROM base AS adapter
 # Launch adapter
-RUN echo "exec source /rmf_demos_ws/install/setup.bash" >> /docker-entrypoint.sh
+RUN echo "source /rmf_demos_ws/install/setup.bash" >> /docker-entrypoint.sh
 RUN echo "exec ros2 launch free_fleet_rmf_adapter adapter.launch.xml" >> /docker-entrypoint.sh
 
 FROM base AS free-fleet-server
