@@ -1,6 +1,6 @@
 <?xml version='1.0' ?>
 <launch>
-    <!-- <arg name="map_file" default="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based.yaml"/> -->
+    <arg name="map_file" default="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based.yaml"/>
     <arg name="param_dir" default="$(find-pkg-share ff_tb3_gz)/params"/>
     <arg name="models_dir" default="$(find-pkg-share ff_tb3_gz)/models"/>
     <arg name="slam" default="False"/>
@@ -20,8 +20,8 @@
         <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
             <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
-            <arg name="map" value="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based_$(var ROBOT_NAME).yaml"/>
-            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger.yaml"/>
+            <arg name="map" value="$(var map_file)"/>
+            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger_$(var ROBOT_NAME).yaml"/>
         </include>
         <!-- launch the rviz -->
         <include file="$(find-pkg-share nav2_bringup)/launch/rviz_launch.py">
@@ -60,8 +60,8 @@
         <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
             <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
-            <arg name="map" value="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based_$(var ROBOT_NAME).yaml"/>
-            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger.yaml"/>
+            <arg name="map" value="$(var map_file)"/>
+            <arg name="params_file" value="$(var param_dir)/turtlebot3_world_burger_$(var ROBOT_NAME).yaml"/>
         </include>
         <!-- launch the rviz -->
         <include file="$(find-pkg-share nav2_bringup)/launch/rviz_launch.py">
