@@ -17,6 +17,9 @@ FROM base AS free-fleet-server
 # Launch server
 RUN echo "exec ros2 launch ff_tb3_gz ff_server.launch.xml" >> /docker-entrypoint.sh
 
-# FROM base AS free-fleet-client
-# # Launch client
-# RUN echo "exec ros2 launch ff_tb3_gz ff_server.launch.xml" >> /free-fleet-docker-entrypoint.sh
+FROM base AS free-fleet-client
+# Set robot name with via ENV
+ENV ROBOT_NAME=robot1
+RUN echo "envsubst < src/ff_tb3_gz/launch/generic_robot_launch.xml.template > install/ff_tb3_gz/share/ff_tb3_gz/launch/generic_robot.launch.xml" >> /docker-entrypoint.sh
+# Launch client
+RUN echo "exec ros2 launch ff_tb3_gz generic_robot.launch.xml" >> /docker-entrypoint.sh

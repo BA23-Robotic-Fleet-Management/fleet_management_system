@@ -41,6 +41,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/ba23-robotic-fleet-management/free-fleet-server
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: free_fleet_client_meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/ba23-robotic-fleet-management/free-fleet-client
+
       - name: Build and push rmf adapter
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -60,3 +66,13 @@ jobs:
           target: free-fleet-server
           tags: ${{ steps.free_fleet_server_meta.outputs.tags }}
           labels: ${{ steps.free_fleet_server_meta.outputs.labels }}
+
+      - name: Build and push free fleet client
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          target: free-fleet-client
+          tags: ${{ steps.free_fleet_client_meta.outputs.tags }}
+          labels: ${{ steps.free_fleet_client_meta.outputs.labels }}
