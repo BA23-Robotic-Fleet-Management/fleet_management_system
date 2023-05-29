@@ -9,11 +9,13 @@
 
     <param name="fleet_name" value="ff_tb3_gz"/>
 
+    <!-- ROS2 topics that the server subscribes to -->
     <param name="fleet_state_topic" value="free_fleet_states"/>
     <param name="mode_request_topic" value="robot_mode_requests"/>
     <param name="path_request_topic" value="robot_path_requests"/>
     <param name="destination_request_topic" value="robot_destination_requests"/>
 
+    <!-- DDS topics that the server uses to communicate with the client -->
     <param name="dds_domain" value="42"/>
     <param name="dds_robot_state_topic" value="robot_state"/>
     <param name="dds_mode_request_topic" value="mode_request"/>
