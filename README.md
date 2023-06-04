@@ -23,8 +23,8 @@ Clone the forked repository and follow the instructions in the
 
 3. Clone this repository and build the fleet manager
 ```bash
-git clone --recurse-submodules https://github.com/BA23-Robotic-Fleet-Management/fleet_manager.git
-cd fleet_manager
+git clone --recurse-submodules https://github.com/BA23-Robotic-Fleet-Management/fleet_management_system.git
+cd fleet_management_system
 source /opt/ros/humble/setup.bash
 source ~/rmf_ws/install/setup.bash
 colcon build --parallel-workers 4 --symlink-install
@@ -38,7 +38,7 @@ in a simulation. [Gazebo](https://gazebosim.org/) is used as the simulation soft
 Start the simulation with the free fleet client and the whole nav2 stack:
 
 ```bash
-cd fleet_manager
+cd fleet_management_system
 source install/setup.bash
 ros2 launch ff_tb3_gz icclab.launch.xml
 ```
@@ -46,7 +46,7 @@ ros2 launch ff_tb3_gz icclab.launch.xml
 Start the free fleet server:
 
 ```bash
-cd fleet_manager
+cd fleet_management_system
 source install/setup.bash
 ros2 launch ff_tb3_gz ff_server.launch.xml
 ```
@@ -54,7 +54,7 @@ ros2 launch ff_tb3_gz ff_server.launch.xml
 Start adapter that connects both Open-RMF and Free Fleet:
 
 ```bash
-cd fleet_manager
+cd fleet_management_system
 source install/setup.bash
 ros2 launch free_fleet_rmf_adapter adapter.launch.xml
 ```
@@ -64,7 +64,7 @@ ros2 launch free_fleet_rmf_adapter adapter.launch.xml
 Give a dispatch order:
 
 ```bash
-cd fleet_manager
+cd fleet_management_system
 source install/setup.bash
 ros2 run rmf_demos_tasks dispatch_patrol --places middle_top2 --use_sim_time
 ```
