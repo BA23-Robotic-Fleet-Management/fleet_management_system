@@ -33,6 +33,7 @@ def generate_launch_description():
 
     # Launch configuration variables specific to simulation
     robot_name = LaunchConfiguration("name", default="burger")
+    namespace = LaunchConfiguration("namespace", default="")
     use_sim_time = LaunchConfiguration("use_sim_time", default="False")
     x_pos = LaunchConfiguration("x_pos", default="0.0")
     y_pos = LaunchConfiguration("y_pos", default="0.0")
@@ -42,6 +43,7 @@ def generate_launch_description():
     declare_robot_name_param = DeclareLaunchArgument(
         "robot_name", default_value="burger"
     )
+    declare_namespace_param = DeclareLaunchArgument("namespace", default_value="")
     # Declare the launch arguments
     declare_use_sim_time_param = DeclareLaunchArgument(
         "use_sim_time", default_value="False"
@@ -58,7 +60,7 @@ def generate_launch_description():
             "-entity",
             robot_name,
             "-robot_namespace",
-            robot_name,
+            namespace,
             "-file",
             sdf_file,
             "-x",
@@ -81,7 +83,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
-        namespace=robot_name,
+        namespace=namespace,
         output="screen",
         parameters=[
             {
@@ -95,6 +97,7 @@ def generate_launch_description():
     ld = LaunchDescription()
     # Declare the launch options
     ld.add_action(declare_robot_name_param)
+    ld.add_action(declare_namespace_param)
     ld.add_action(declare_use_sim_time_param)
     ld.add_action(declare_x_pos_param)
     ld.add_action(declare_y_pos_param)

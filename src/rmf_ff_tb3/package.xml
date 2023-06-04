@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ff_tb3_gz</name>
+  <name>rmf_ff_tb3</name>
   <version>0.1.0</version>
   <description>This package contains launch files that are used for testing the fleet management system.</description>
   <maintainer email="hussein.kabbout@hotmail.com">Hussein Kabbout</maintainer>

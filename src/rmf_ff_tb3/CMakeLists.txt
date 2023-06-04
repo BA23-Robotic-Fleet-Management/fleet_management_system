@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(ff_tb3_gz)
+project(rmf_ff_tb3)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)

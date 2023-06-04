@@ -40,7 +40,7 @@ Start the simulation with the free fleet client and the whole nav2 stack:
 ```bash
 cd fleet_management_system
 source install/setup.bash
-ros2 launch ff_tb3_gz icclab.launch.xml
+ros2 launch rmf_ff_tb3 icclab_single_robot_gz.launch.xml
 ```
 
 Start the free fleet server:
@@ -48,7 +48,7 @@ Start the free fleet server:
 ```bash
 cd fleet_management_system
 source install/setup.bash
-ros2 launch ff_tb3_gz ff_server.launch.xml
+ros2 launch rmf_ff_tb3 ff_server.launch.xml
 ```
 
 Start adapter that connects both Open-RMF and Free Fleet:

@@ -1,8 +1,8 @@
 <?xml version='1.0' ?>
 <launch>
     <arg name="map_file" default="$(find-pkg-share icclab_maps)/icclab/icclab_gz_based.yaml"/>
-    <arg name="param_dir" default="$(find-pkg-share ff_tb3_gz)/params"/>
-    <arg name="models_dir" default="$(find-pkg-share ff_tb3_gz)/models"/>
+    <arg name="param_dir" default="$(find-pkg-share rmf_ff_tb3)/params"/>
+    <arg name="models_dir" default="$(find-pkg-share rmf_ff_tb3)/models"/>
     <arg name="slam" default="False"/>
 
     <!-- Start gazebo simulation with the ICCLab map -->
@@ -11,15 +11,16 @@
     <group>
         <let name="ROBOT_NAME" value="robot1"/>
         <!-- Spawn robot -->
-        <include file="$(find-pkg-share ff_tb3_gz)/launch/spawn_turtlebot3.launch.py">
+        <include file="$(find-pkg-share rmf_ff_tb3)/launch/spawn_turtlebot3.launch.py">
             <arg name="name" value="$(var ROBOT_NAME)"/>
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
             <arg name="x_pos" value="20"/>
             <arg name="y_pos" value="-8.2"/>
             <arg name="sdf_file" value="$(var models_dir)/$(var ROBOT_NAME).sdf"/>
         </include>
         <!-- launch the navigation (nav2) stack with test maps -->
-        <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
+        <include file="$(find-pkg-share rmf_ff_tb3)/launch/navigation2.launch.py">
             <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
             <arg name="map" value="$(var map_file)"/>
@@ -34,7 +35,7 @@
         <!-- launch the free fleet client -->
         <node name="turtlebot3_free_fleet_client_node_$(var ROBOT_NAME)" pkg="free_fleet_client_ros2"
             exec="free_fleet_client_ros2" output="both">
-            <param name="fleet_name" value="ff_tb3_gz"/>
+            <param name="fleet_name" value="rmf_ff_tb3"/>
             <param name="robot_name" value="$(var ROBOT_NAME)"/>
             <param name="robot_model" value="turtlebot3"/>
             <param name="level_name" value="L1"/>
@@ -52,15 +53,16 @@
     <group>
         <let name="ROBOT_NAME" value="robot2"/>
         <!-- Spawn robot -->
-        <include file="$(find-pkg-share ff_tb3_gz)/launch/spawn_turtlebot3.launch.py">
+        <include file="$(find-pkg-share rmf_ff_tb3)/launch/spawn_turtlebot3.launch.py">
             <arg name="name" value="$(var ROBOT_NAME)"/>
+            <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
             <arg name="x_pos" value="20.0"/>
             <arg name="y_pos" value="-14.0"/>
             <arg name="sdf_file" value="$(var models_dir)/$(var ROBOT_NAME).sdf"/>
         </include>
         <!-- launch the navigation (nav2) stack with test maps -->
-        <include file="$(find-pkg-share ff_tb3_gz)/launch/navigation2.launch.py">
+        <include file="$(find-pkg-share rmf_ff_tb3)/launch/navigation2.launch.py">
             <arg name="namespace" value="$(var ROBOT_NAME)"/>
             <arg name="use_sim_time" value="True"/>
             <arg name="map" value="$(var map_file)"/>
@@ -75,7 +77,7 @@
         <!-- launch the free fleet client -->
         <node name="turtlebot3_free_fleet_client_node_$(var ROBOT_NAME)" pkg="free_fleet_client_ros2"
             exec="free_fleet_client_ros2" output="both">
-            <param name="fleet_name" value="ff_tb3_gz"/>
+            <param name="fleet_name" value="rmf_ff_tb3"/>
             <param name="robot_name" value="$(var ROBOT_NAME)"/>
             <param name="robot_model" value="turtlebot3"/>
             <param name="level_name" value="L1"/>

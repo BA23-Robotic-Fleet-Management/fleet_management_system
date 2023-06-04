@@ -84,7 +84,7 @@ def generate_launch_description():
             ),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(get_package_share_directory("ff_tb3_gz"), "launch", "localization_launch.py")
+                    os.path.join(get_package_share_directory("rmf_ff_tb3"), "launch", "localization_launch.py")
                 ),
                 launch_arguments={
                     "namespace": namespace,
