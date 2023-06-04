@@ -134,8 +134,6 @@ class RMFAdapter(rclpy.node.Node):
                 return None
 
             self.get_logger().info(f"{goal=}")
-            goal = 23.6750414731988, -8.510096778714145, goal[2] # TODO: remove this, only for testing
-            self.get_logger().info(f"{goal=}")
 
             target_x = goal[0]
             target_y = goal[1]
