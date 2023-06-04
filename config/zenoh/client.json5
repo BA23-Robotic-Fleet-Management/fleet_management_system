@@ -1,0 +1,13 @@
+{
+  plugins: {
+    dds: {
+      domain: 0,
+    },
+  },
+  mode: "client",
+  connect: {
+    endpoints: [
+      "tcp/ZENOH_SERVER_IP:ZENOH_SERVER_PORT"
+    ]
+  }
+}
