@@ -6,7 +6,7 @@ package_name = "free_fleet_rmf_adapter"
 
 setup(
     name=package_name,
-    version="1.4.0",
+    version="0.1.0",
     packages=find_packages(),
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
@@ -18,9 +18,8 @@ setup(
     zip_safe=True,
     maintainer="Hussein Kabbout, Navid Sassan",
     maintainer_email="hussein.kabbout@hotmail.com,sassanav@students.zhaw.ch",
-    description="TODO_DESCRIPTION",
-    # TODO: Is this allowed?
-    license="TODO_LICENSE",
+    description="Adapater that connects Open-RMF and Free Fleet to enable fleet management.",
+    license="Apache License 2.0",
     entry_points={
         "console_scripts": [
             "adapter=src.adapter:main",

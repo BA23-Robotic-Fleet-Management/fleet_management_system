@@ -2,10 +2,11 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>icclab_maps</name>
-  <version>0.0.0</version>
-  <description>TODO</description>
-  <maintainer email="TODO@example.com">TODO</maintainer>
-  <license>TODO</license>
+  <version>0.1.0</version>
+  <description>ICCLab package to build map files of the lab. This package also contains a launch file to launch the map in gazebo.</description>
+  <maintainer email="hussein.kabbout@hotmail.com">Hussein Kabbout</maintainer>
+  <maintainer email="sassanav@students.zhaw.ch">Navid Sassan</maintainer>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rmf_building_map_tools</buildtool_depend>
