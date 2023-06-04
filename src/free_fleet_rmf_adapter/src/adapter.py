@@ -16,11 +16,12 @@ import argparse
 import math
 import sys
 from functools import partial
+from typing import Optional
 
 import rclpy.node
 import rmf_adapter as adpt
-import rmf_adapter.vehicletraits as traits
 import rmf_adapter.geometry as geometry
+import rmf_adapter.vehicletraits as traits
 import yaml
 from rclpy.parameter import Parameter
 from rclpy.qos import qos_profile_system_default, QoSProfile, QoSHistoryPolicy as History, QoSReliabilityPolicy as Reliability
@@ -48,10 +49,7 @@ class Robot:
     def to_easy_control_robot_state(self) -> RobotState:
         return adpt.easy_full_control.RobotState(
             self.state.name,
-            # FIXME: From where can we get this information
-            # it is not published in the fleet_state / free_fleet_states
-            "test_node",
-            # FIXME: This is probably wrong
+            "test_node", # we do not provide a starting node - it should be able to find it from the coords of the robot
             'L1',
             [self.state.location.x, self.state.location.y, self.state.location.yaw],
             # not dealing with low battery right now
@@ -69,7 +67,7 @@ class RMFAdapter(rclpy.node.Node):
         # Dict that contains the current task ID that is being processed
         self.cmd_ids = {}
         # Fleet name
-        self.fleet_name = "gaga"
+        self.fleet_name = "None"
         # RMF control object
         self.easy_full_control = None
         self.init_rmf_adapter(config, nav_graph_path, use_sim_time)
@@ -112,9 +110,6 @@ class RMFAdapter(rclpy.node.Node):
             rmf_message (FleetState): Message that is sent via ROS2
         """
 
-        def __goal_completed(robot_name: str) -> bool:
-            return self.get_robot_state(robot_name).last_request_completed()
-
         def __get_robot_state(robot_name: str) -> RobotState:
             robot = self.robots.get(robot_name)
             if robot is None:
@@ -122,7 +117,14 @@ class RMFAdapter(rclpy.node.Node):
 
             return robot.to_easy_control_robot_state()
 
-        def __navigate(robot_name: str, map_name: str, goal: [], update_handle) -> partial:
+        def __goal_completed(robot_name: str, remaining_time, request_replan) -> bool:
+            # robot_state = __get_robot_state(robot_name)
+            # if robot_state:
+            #     return robot_state.last_completed_request == self.cmd_ids[robot_name]
+
+            return False
+
+        def __navigate(robot_name: str, map_name: str, goal: [], update_handle) -> Optional[partial]:
             cmd_id = self.next_id
             self.next_id += 1
             self.cmd_ids[robot_name] = cmd_id
@@ -131,6 +133,8 @@ class RMFAdapter(rclpy.node.Node):
             if robot is None:
                 return None
 
+            self.get_logger().info(f"{goal=}")
+            goal = 23.6750414731988, -8.510096778714145, goal[2] # TODO: remove this, only for testing
             self.get_logger().info(f"{goal=}")
 
             target_x = goal[0]
@@ -156,7 +160,7 @@ class RMFAdapter(rclpy.node.Node):
             target_loc.x = target_x
             target_loc.y = target_y
             target_loc.yaw = target_yaw
-            target_loc.level_name = map_name
+            target_loc.level_name = 'turtlebot_world'
 
             path_request.fleet_name = self.fleet_name
             path_request.robot_name = robot_name
@@ -165,6 +169,7 @@ class RMFAdapter(rclpy.node.Node):
             self.path_publisher.publish(path_request)
 
             robot.last_path_request = path_request
+            robot.destination = target_loc
 
             self.get_logger().info(f"Navigating robot {robot_name}")
             return partial(__goal_completed, robot_name)
@@ -216,17 +221,8 @@ class RMFAdapter(rclpy.node.Node):
             if robot.name not in self.robots:
                 self.get_logger().info(f"Found robot {robot.name}")
                 self.robots[robot.name] = Robot(robot)
+                self.get_logger().info(f'''{robot=}''')
                 # Add robot to fleet
-                # FIXME:
-                # [adapter-2] [ERROR] [1680470020.884664428] [easy_fleet_adapter]:
-                # Unable to compute a StartSet for robot [ros2_tb3_0]
-                # using level_name [turtlebot_world] and location
-                # [-1.895, -0.420, 0.000] specified in the RobotState param.
-                # This can happen if the level_name in RobotState does not
-                # match any of the map names in the navigation graph supplied
-                # or if the location reported in the RobotState is far way from
-                # the navigation graph. This robot will not be added to the
-                #  fleet.
 
                 self.easy_full_control.add_robot(
                     self.robots[robot.name].to_easy_control_robot_state(),
