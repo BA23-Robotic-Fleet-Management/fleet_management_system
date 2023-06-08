@@ -1,8 +1,8 @@
-# ROS2 Fleet Management System
+# ROS 2 Fleet Management System
 
 This repository contains an experimental fleet management system built on top of:
 
-- [ROS2](https://docs.ros.org/en/humble/index.html)
+- [ROS 2](https://docs.ros.org/en/humble/index.html)
 - [Open-RMF](https://www.open-rmf.org/)
 - [Free Fleet](https://github.com/open-rmf/free_fleet)
 
@@ -10,7 +10,7 @@ This repository contains an experimental fleet management system built on top of
 
 To be able to test the fleet management system the following steps are required:
 
-1. Installing ROS2 humble (See the [official documentation](https://docs.ros.org/en/humble/Installation.html)).
+1. Installing ROS 2 humble (See the [official documentation](https://docs.ros.org/en/humble/Installation.html)).
 2. Installing Open-RMF with the `easy_fleet_adapter` feature:
 
     * At the time of writing, the `easy_fleet_adapter` feature, still lives in its own branch and has not yet been merged into the main branch.
